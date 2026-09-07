@@ -8,6 +8,11 @@ venv/
 .env
 *service-account*.json
 *credentials*.json
+# Google Cloud men-download key JSON dengan nama default "<project-id>-<hash>.json"
+# (tidak selalu mengandung kata "service-account") -- blokir SEMUA .json di root
+# proyek ini sebagai jaring pengaman, karena tidak ada file .json legit yang
+# memang perlu di-commit di root (config pakai YAML, bukan JSON).
+/*.json
 
 # Local data (SQLite = source of truth, never commit)
 *.db

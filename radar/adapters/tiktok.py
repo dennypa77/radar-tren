@@ -29,7 +29,8 @@ _ALIAS_PER_BAGIAN: dict[str, dict[str, list[str]]] = {
     },
     "hashtag": {
         "istilah": ["hashtag", "hashtag name", "tag", "istilah"],
-        "skor": ["posts", "views", "post volume", "popularity", "skor"],
+        "skor": ["posts", "post volume", "popularity", "skor"],
+        "views": ["views", "view count"],
         **_ALIAS_BERSAMA,
     },
     "top_products": {
@@ -101,6 +102,12 @@ class TikTokCSVAdapter:
             if not istilah:
                 continue
             kolom_arah = pemetaan.get("arah_perubahan")
+            catatan_parts = [f"bagian={bagian}"]
+            kolom_views = pemetaan.get("views")
+            if kolom_views:
+                views = _angka(row.get(kolom_views))
+                if views is not None:
+                    catatan_parts.append(f"views={views:g}")
             hasil.append(
                 Sinyal(
                     sumber=self.nama,
@@ -111,7 +118,7 @@ class TikTokCSVAdapter:
                     skor=_angka(row.get(pemetaan["skor"])),
                     skor_satuan=_SATUAN_PER_BAGIAN[bagian],
                     arah_perubahan=_arah(row.get(kolom_arah)) if kolom_arah else None,
-                    catatan=f"bagian={bagian}",
+                    catatan=", ".join(catatan_parts),
                     raw=json.dumps(row, ensure_ascii=False),
                 )
             )

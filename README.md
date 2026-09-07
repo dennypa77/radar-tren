@@ -78,13 +78,20 @@ manusia di tahap berikutnya (lihat brief).
 > **Region Indonesia (ID) tidak tersedia** di Pinterest Trends (dicek langsung
 > 2026-09-07). Denny memutuskan pakai **kedua** region terdekat: **Philippines
 > (PH) dan Malaysia (MY)** -- bukan pilih salah satu.
+>
+> **Temuan penting (2026-09-07):** versi publik Pinterest Trends TIDAK punya
+> alat cari-per-kata-kunci seperti Google Trends -- jadi kita **tidak bisa**
+> cek skor spesifik untuk tiap kata pantau di `config/kata_pantau.yaml`. Yang
+> tersedia tanpa login hanya tabel **"Search trends"**: 5 kata kunci yang
+> SEDANG trending apa adanya (bukan hasil pencarian kita), dengan kolom
+> perubahan mingguan/bulanan/tahunan dalam persen -- bukan indeks 0-100. Akses
+> lebih dalam (daftar penuh) minta login ke akun Pinterest Business. Denny
+> memutuskan: pakai daftar "Search trends" apa adanya sebagai sinyal budaya
+> visual mentah, bukan dipaksa cocok dengan 12 kata pantau kita.
 
 1. Buka [trends.pinterest.com](https://trends.pinterest.com), pilih region
-   **Philippines**, masukkan tiap kata pantau dari `config/kata_pantau.yaml`,
-   catat/salin hasilnya (istilah, index 0-100, arah perubahan) ke CSV dengan
-   kolom kira-kira: `Term, Index, WoW Change` (nama kolom boleh sedikit
-   berbeda -- parser toleran terhadap variasi nama umum, tapi akan **gagal
-   dengan pesan jelas** kalau kolom istilah/skor benar-benar tidak ditemukan).
+   **Philippines**, scroll ke bagian **"Search trends"**, salin isi tabelnya
+   (5 baris: Keywords, Weekly change, Monthly change, Yearly change) ke CSV.
    Ulangi untuk region **Malaysia**.
 2. Impor kedua file terpisah (kolom `region` yang membedakan keduanya di DB,
    jadi tidak bentrok):
@@ -94,7 +101,22 @@ manusia di tahap berikutnya (lihat brief).
    radar impor --sumber pinterest --file pinterest_my_2026-W37.csv --region MY
    ```
 
+   Contoh isi CSV yang valid:
+
+   ```csv
+   Keywords,Weekly change,Monthly change,Yearly change
+   wikang filipino at al poster,20%,10000%+,10000%+
+   lesbian space princess,6000%,10000%+,10000%+
+   ```
+
 ### TikTok Creative Center (ads.tiktok.com/business/creativecenter)
+
+> **Catatan (2026-09-07):** TikTok me-rebrand produk ini jadi "TikTok One
+> Creative Suite" -- URL lama redirect ke halaman marketing umum. Trends
+> sekarang ada di `ads.tiktok.com/creative/creativeCenter/trends/hashtag?region=ID`
+> (ganti `hashtag` dengan bagian lain kalau tersedia). Pola aksesnya sama
+> seperti sebelumnya: browsing dasar (top 3 per kategori) tanpa login, data
+> lengkap + export CSV tetap butuh login akun TikTok biasa.
 
 1. Buka Creative Center, set region **Indonesia**. Browsing dasar tidak perlu
    login; untuk export butuh login akun TikTok biasa.

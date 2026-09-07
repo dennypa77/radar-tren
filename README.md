@@ -19,26 +19,50 @@ manusia di tahap berikutnya (lihat brief).
    pip install -e .
    ```
 
-3. Salin `.env.example` ke `.env` dan isi:
+3. Buat service account Google (sekali saja, ini yang dipakai `radar sync` untuk
+   nulis ke Sheet tanpa perlu login interaktif tiap minggu):
+
+   1. Buka [console.cloud.google.com](https://console.cloud.google.com/), login
+      pakai akun Google yang sama dengan pemilik/pengelola Sheet (`hobjectgroup@gmail.com`).
+   2. Buat project baru (pojok kiri atas, dropdown project -> **New Project**).
+      Nama bebas, mis. `radar-tren-hog`.
+   3. Di search bar atas, cari **"Google Sheets API"** -> buka -> klik **Enable**.
+      Ulangi untuk **"Google Drive API"** (dibutuhkan library `gspread` untuk
+      membuka file lewat ID).
+   4. Masih di project yang sama, cari **"Service Accounts"** (atau menu
+      **IAM & Admin -> Service Accounts**) -> **Create Service Account**.
+      - Nama: mis. `radar-tren-bot`. Role/permission project bisa dilewati
+        (skip) -- tidak perlu, karena aksesnya diatur lewat sharing Sheet,
+        bukan lewat IAM project.
+   5. Klik service account yang baru dibuat -> tab **Keys** -> **Add Key** ->
+      **Create new key** -> pilih **JSON** -> download. File inilah yang jadi
+      `service-account.json`.
+   6. Simpan file itu di folder proyek ini (atau di mana saja), lalu **jangan
+      pernah commit ke git** -- sudah otomatis diabaikan lewat `.gitignore`
+      selama namanya mengandung `service-account` atau `credentials`.
+   7. Buka file JSON-nya, cari field `"client_email"` -- itu email service
+      account-nya (bentuknya `xxx@xxx.iam.gserviceaccount.com`).
+   8. Buka Sheet **"Radar Tren"**, klik **Share**, tempel email dari langkah 7,
+      beri akses **Editor**, lalu **Send/Share** (tidak perlu notifikasi email).
+      Tanpa langkah ini, `radar sync` akan gagal dengan error izin ditolak.
+
+4. Salin `.env.example` ke `.env` dan isi:
 
    ```bash
    copy .env.example .env
    ```
 
-   - `GOOGLE_SERVICE_ACCOUNT_FILE` -- path ke JSON service account Google (buat di
-     Google Cloud Console, aktifkan Google Sheets API, download key JSON). **Jangan
-     pernah commit file ini.**
+   - `GOOGLE_SERVICE_ACCOUNT_FILE` -- path ke file JSON dari langkah 3 di atas.
    - `GOOGLE_SHEETS_ID` -- ID spreadsheet tujuan (bagian antara `/d/` dan `/edit`
-     di URL). Kalau spreadsheet belum ada, buat manual dulu lalu share ke email
-     service account (ada di dalam JSON-nya, field `client_email`) sebagai **Editor**.
+     di URL Sheet).
 
-4. Cek `config/kata_pantau.yaml` -- daftar 10-15 kata pantau (campur Indonesia &
+5. Cek `config/kata_pantau.yaml` -- daftar 10-15 kata pantau (campur Indonesia &
    Inggris) sudah diisi contoh awal. **Daftar ini terkunci sampai tanggal
    `dikunci_sampai`** supaya data antar-minggu bisa dibandingkan. Kalau memang
    perlu diubah lebih awal, jalankan `radar init --terima-perubahan-kata-pantau`
    setelah mengedit file untuk menyimpan baseline baru secara sengaja.
 
-5. Jalankan:
+6. Jalankan:
 
    ```bash
    radar init
@@ -47,7 +71,7 @@ manusia di tahap berikutnya (lihat brief).
    Ini membuat `radar.db` (SQLite lokal, **jangan commit**, sudah masuk
    `.gitignore`) dan memvalidasi config.
 
-## Cara ambil export dari kedua UI sumber
+## Cara ambil export dari tiga UI sumber
 
 ### Pinterest Trends (trends.pinterest.com)
 
@@ -118,6 +142,10 @@ radar kalender-impor --file kalender_manual_2026-W37.csv
 ```
 
 ## Alur mingguan (target ≤ 45 menit)
+
+Dijalankan **manual** oleh operator, bukan lewat scheduler/cron (keputusan
+Denny, 2026-09-07 -- sejalan dengan Non-Goal di brief: otomatisasi jadwal
+belum diperlukan sampai ritme mingguannya terbukti jalan).
 
 ```bash
 radar status                                          # cek minggu bolong dulu

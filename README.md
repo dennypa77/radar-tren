@@ -51,19 +51,23 @@ manusia di tahap berikutnya (lihat brief).
 
 ### Pinterest Trends (trends.pinterest.com)
 
+> **Region Indonesia (ID) tidak tersedia** di Pinterest Trends (dicek langsung
+> 2026-09-07). Denny memutuskan pakai **kedua** region terdekat: **Philippines
+> (PH) dan Malaysia (MY)** -- bukan pilih salah satu.
+
 1. Buka [trends.pinterest.com](https://trends.pinterest.com), pilih region
-   **Indonesia (ID)** kalau tersedia (kalau tidak, pakai region terdekat dan
-   catat di config bahwa bobotnya akan diturunkan di tahap 2 -- ini bukan
-   alasan berhenti).
-2. Masukkan tiap kata pantau dari `config/kata_pantau.yaml`, catat/salin
-   hasilnya (istilah, index 0-100, arah perubahan) ke CSV dengan kolom kira-kira:
-   `Term, Index, WoW Change` (nama kolom boleh sedikit berbeda -- parser toleran
-   terhadap variasi nama umum, tapi akan **gagal dengan pesan jelas** kalau
-   kolom istilah/skor benar-benar tidak ditemukan).
-3. Impor:
+   **Philippines**, masukkan tiap kata pantau dari `config/kata_pantau.yaml`,
+   catat/salin hasilnya (istilah, index 0-100, arah perubahan) ke CSV dengan
+   kolom kira-kira: `Term, Index, WoW Change` (nama kolom boleh sedikit
+   berbeda -- parser toleran terhadap variasi nama umum, tapi akan **gagal
+   dengan pesan jelas** kalau kolom istilah/skor benar-benar tidak ditemukan).
+   Ulangi untuk region **Malaysia**.
+2. Impor kedua file terpisah (kolom `region` yang membedakan keduanya di DB,
+   jadi tidak bentrok):
 
    ```bash
-   radar impor --sumber pinterest --file pinterest_2026-W37.csv
+   radar impor --sumber pinterest --file pinterest_ph_2026-W37.csv --region PH
+   radar impor --sumber pinterest --file pinterest_my_2026-W37.csv --region MY
    ```
 
 ### TikTok Creative Center (ads.tiktok.com/business/creativecenter)
@@ -100,7 +104,8 @@ radar kalender-impor --file kalender_manual_2026-W37.csv
 
 ```bash
 radar status                                          # cek minggu bolong dulu
-radar impor --sumber pinterest --file pinterest.csv
+radar impor --sumber pinterest --file pinterest_ph.csv --region PH
+radar impor --sumber pinterest --file pinterest_my.csv --region MY
 radar impor --sumber tiktok --file keyword.csv --bagian keyword
 radar impor --sumber tiktok --file hashtags.csv --bagian hashtag
 radar impor --sumber tiktok --file products.csv --bagian top_products

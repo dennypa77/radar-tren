@@ -2,9 +2,12 @@
 # Region Indonesia (ID) TIDAK tersedia di trends.pinterest.com. Opsi yang ada:
 # US, GB+IE, CA, grup2 Eropa, MX/AR/CO/BR, AU+NZ, MY, PH, TH, EG, TR, KR.
 # region_utama di bawah dipakai untuk TikTok CC (ID tersedia di sana) dan untuk
-# label region pada baris sinyal. Untuk impor Pinterest, gunakan region terdekat
-# (kandidat: PH atau MY) dan catat di kolom `catatan` saat radar init/impor
-# bahwa bobotnya akan diturunkan di tahap 2 (skoring) -- bukan alasan berhenti.
+# label region pada baris sinyal. Untuk impor Pinterest, Denny memutuskan pakai
+# KEDUA region terdekat: PH dan MY (bukan pilih salah satu) -- jalankan importnya
+# dua kali per periode, satu dengan --region PH, satu dengan --region MY. Skema
+# sinyal punya UNIQUE(sumber, periode, istilah, region), jadi keduanya tersimpan
+# berdampingan tanpa bentrok. Bobotnya akan diturunkan di tahap 2 (skoring) --
+# bukan alasan berhenti.
 versi: 1
 dikunci_sampai: 2026-10-05   # jangan ubah daftar kata_pantau sebelum tanggal ini
 region_utama: ID

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 import sqlite3
 from datetime import date
@@ -17,6 +18,7 @@ from rich.table import Table
 from radar import db
 from radar.adapters.anilist import AniListAdapter, AniListError, MUSIM_VALID
 from radar.adapters.base import KolomTidakDitemukan
+from radar.adapters.google_trends import GoogleTrendsCSVAdapter
 from radar.adapters.pinterest import PinterestCSVAdapter
 from radar.adapters.tiktok import BAGIAN_VALID, TikTokCSVAdapter
 from radar.config import ConfigError, KataPantauTerkunciError, muat_config, tegakkan_kunci
@@ -34,7 +36,7 @@ for _stream in (sys.stdout, sys.stderr):
 app = typer.Typer(add_completion=False, help="Radar Tren Desain -- pengumpul sinyal tren mingguan HOG.")
 console = Console()
 
-SUMBER_MINGGUAN = ["PINTEREST", "TIKTOK_CC"]
+SUMBER_MINGGUAN = ["PINTEREST", "TIKTOK_CC", "GOOGLE_TRENDS"]
 
 
 def _db_path() -> Path:
@@ -111,7 +113,7 @@ def init(
 
 @app.command()
 def impor(
-    sumber: str = typer.Option(..., "--sumber", help="pinterest | tiktok"),
+    sumber: str = typer.Option(..., "--sumber", help="pinterest | tiktok | google-trends"),
     file: Path = typer.Option(..., "--file", exists=True, help="Path file CSV hasil export."),
     periode: Optional[str] = typer.Option(None, "--periode", help="ISO week, mis. 2026-W37. Default: minggu ini."),
     region: Optional[str] = typer.Option(None, "--region", help="Default: region_utama dari config."),
@@ -119,13 +121,13 @@ def impor(
         None, "--bagian", help=f"Khusus TikTok: {BAGIAN_VALID}. Default: deteksi otomatis."
     ),
 ):
-    """Impor export CSV Pinterest Trends atau TikTok Creative Center."""
+    """Impor export CSV Pinterest Trends, TikTok Creative Center, atau Google Trends."""
     conn = _sambung()
     cfg = _muat_config_dan_tegakkan(conn)
 
     periode = periode or periode_sekarang()
     region = region or cfg.region_utama
-    sumber_norm = sumber.strip().lower()
+    sumber_norm = re.sub(r"[^a-z]", "", sumber.strip().lower())
 
     if sumber_norm == "pinterest":
         adapter = PinterestCSVAdapter(file)
@@ -136,8 +138,11 @@ def impor(
             raise typer.Exit(1)
         adapter = TikTokCSVAdapter(file, bagian=bagian)
         nama_sumber = adapter.nama
+    elif sumber_norm == "googletrends":
+        adapter = GoogleTrendsCSVAdapter(file)
+        nama_sumber = adapter.nama
     else:
-        console.print("[red]--sumber harus 'pinterest' atau 'tiktok'[/red]")
+        console.print("[red]--sumber harus 'pinterest', 'tiktok', atau 'google-trends'[/red]")
         raise typer.Exit(1)
 
     try:

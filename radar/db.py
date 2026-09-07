@@ -11,7 +11,7 @@ from radar.models import KalenderRilis, Sinyal
 SKEMA = """
 CREATE TABLE IF NOT EXISTS sinyal (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
-  sumber         TEXT NOT NULL,
+  sumber         TEXT NOT NULL,          -- PINTEREST | TIKTOK_CC | GOOGLE_TRENDS
   periode        TEXT NOT NULL,
   tanggal_ambil  DATE NOT NULL,
   istilah        TEXT NOT NULL,

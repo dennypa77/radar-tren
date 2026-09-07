@@ -1,8 +1,8 @@
 # Radar Tren Desain (HOG)
 
-CLI untuk mengumpulkan sinyal tren desain mingguan dari 3 sumber hulu (Pinterest
-Trends, TikTok Creative Center, AniList) ke satu Google Sheet, sebagai bahan
-penentuan produk/SKU baru di percetakan HOG.
+CLI untuk mengumpulkan sinyal tren desain mingguan dari 4 sumber hulu (Pinterest
+Trends, TikTok Creative Center, Google Trends, AniList) ke satu Google Sheet,
+sebagai bahan penentuan produk/SKU baru di percetakan HOG.
 
 Tool ini sengaja **tipis**: hanya mengambil, menyimpan, dan menampilkan sinyal
 mentah. Klasifikasi tema, skoring gabungan, dan keputusan produk dilakukan
@@ -84,6 +84,23 @@ manusia di tahap berikutnya (lihat brief).
    radar impor --sumber tiktok --file top_products.csv --bagian top_products
    ```
 
+### Google Trends (trends.google.com)
+
+Ditambahkan atas keputusan Denny (2026-09-07) supaya sinyal Indonesia lebih
+kuat -- Pinterest Trends tidak punya region ID, Google Trends punya.
+
+1. Buka [trends.google.com](https://trends.google.com/trends/explore), pilih
+   region **Indonesia**, masukkan sampai 5 kata pantau sekaligus untuk
+   dibandingkan (Google Trends batasi 5 per explore).
+2. Klik tombol **export** (ikon unduh) di grafik "Interest over time" untuk
+   unduh CSV mentahnya (jangan diedit manual).
+3. Ulangi untuk sisa kata pantau (12 kata pantau = sekitar 3 file @ 4-5 istilah).
+4. Impor tiap file:
+
+   ```bash
+   radar impor --sumber google-trends --file google_trends_batch1.csv
+   ```
+
 ### Kalender Rilis
 
 Anime (otomatis, dari AniList -- tidak perlu file):
@@ -109,6 +126,9 @@ radar impor --sumber pinterest --file pinterest_my.csv --region MY
 radar impor --sumber tiktok --file keyword.csv --bagian keyword
 radar impor --sumber tiktok --file hashtags.csv --bagian hashtag
 radar impor --sumber tiktok --file products.csv --bagian top_products
+radar impor --sumber google-trends --file google_trends_batch1.csv
+radar impor --sumber google-trends --file google_trends_batch2.csv
+radar impor --sumber google-trends --file google_trends_batch3.csv
 radar kalender-ambil --musim FALL --tahun 2026        # sesuai musim berjalan
 radar sync                                             # tulis ke Google Sheet
 radar status                                           # verifikasi akhir
@@ -126,7 +146,7 @@ radar lewati --sumber pinterest --periode 2026-W38 --alasan "libur lebaran"
 | Perintah | Fungsi |
 |---|---|
 | `radar init` | Buat DB + skema, validasi config |
-| `radar impor --sumber pinterest\|tiktok --file X.csv` | Impor export CSV |
+| `radar impor --sumber pinterest\|tiktok\|google-trends --file X.csv` | Impor export CSV |
 | `radar kalender-ambil --musim <WINTER\|SPRING\|SUMMER\|FALL> --tahun N` | Tarik data anime dari AniList |
 | `radar kalender-impor --file X.csv` | Impor kalender rilis manual (non-anime) |
 | `radar sync` | Tulis ulang SQLite -> Google Sheet |
